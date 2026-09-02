@@ -1,0 +1,4 @@
+customer_id,customer_name,email,state,updated_at
+C101,Ana Patel,ana@example.com,TX,2026-08-01T00:00:00Z
+C102,Michael Lee,michael@example.com,CA,2026-08-01T00:00:00Z
+

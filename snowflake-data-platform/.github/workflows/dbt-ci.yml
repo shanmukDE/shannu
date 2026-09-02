@@ -1,0 +1,26 @@
+name: dbt CI
+on:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  dbt-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt
+      - working-directory: dbt
+        run: |
+          cp profiles.yml.example profiles.yml
+          dbt deps
+          dbt parse --profiles-dir .
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_ROLE: DE_TRANSFORMER
+          SNOWFLAKE_DATABASE: SNOWFLAKE_DEMO
+          SNOWFLAKE_WAREHOUSE: DE_WH
+          SNOWFLAKE_SCHEMA: ANALYTICS

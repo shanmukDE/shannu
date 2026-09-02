@@ -1,0 +1,18 @@
+version: 2
+sources:
+  - name: staging_source
+    database: SNOWFLAKE_DEMO
+    schema: STAGING
+    tables:
+      - name: orders_incremental
+        loaded_at_field: ingested_at
+        freshness:
+          warn_after: {count: 2, period: hour}
+          error_after: {count: 24, period: hour}
+  - name: raw_reference
+    database: SNOWFLAKE_DEMO
+    schema: RAW
+    tables:
+      - name: customers
+      - name: products
+

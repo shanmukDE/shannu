@@ -1,0 +1,42 @@
+version: 2
+models:
+  - name: stg_orders
+    columns:
+      - name: order_id
+        tests: [not_null, unique]
+      - name: customer_id
+        tests: [not_null]
+      - name: order_ts
+        tests: [not_null]
+      - name: status
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['CREATED', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'REFUNDED']
+  - name: dim_customers
+    columns:
+      - name: customer_sk
+        tests: [not_null, unique]
+      - name: customer_id
+        tests: [not_null]
+  - name: dim_products
+    columns:
+      - name: product_sk
+        tests: [not_null, unique]
+  - name: fct_orders
+    columns:
+      - name: order_line_sk
+        tests: [not_null, unique]
+      - name: customer_sk
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_sk
+      - name: product_sk
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_products')
+                field: product_sk
+
