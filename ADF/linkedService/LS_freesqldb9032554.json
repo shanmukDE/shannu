@@ -1,0 +1,25 @@
+{
+	"name": "LS_freesqldb9032554",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "sbdashboarding.database.windows.net",
+			"database": "free-sql-db-9032554",
+			"encrypt": "mandatory",
+			"trustServerCertificate": false,
+			"authenticationType": "SQL",
+			"userName": "Cloud",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_sbdashboardingshan",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "sqlserverpassword",
+				"secretVersion": "908504742345452d845aac477512c901"
+			}
+		}
+	}
+}

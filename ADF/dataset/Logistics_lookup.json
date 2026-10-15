@@ -1,0 +1,13 @@
+{
+	"name": "Logistics_lookup",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_MySQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "MySqlTable",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,24 @@
+{
+	"name": "Sales_with",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_sbboarding2508",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Sales_with_NaNs_v1.3.csv",
+				"container": "inputt"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

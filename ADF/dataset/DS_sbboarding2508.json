@@ -1,0 +1,25 @@
+{
+	"name": "DS_sbboarding2508",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_sbboarding2508",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Document.csv",
+				"folderPath": "folder",
+				"container": "inputt"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

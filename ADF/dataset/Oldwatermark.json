@@ -1,0 +1,22 @@
+{
+	"name": "Oldwatermark",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_freesqldb9032554",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "oldwatermark",
+				"type": "date"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "OLDWATERMARK"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

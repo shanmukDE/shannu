@@ -1,0 +1,52 @@
+{
+	"name": "DelimitedText7",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_sbboardingdev673",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "output"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Group",
+				"type": "String"
+			},
+			{
+				"name": "Customer_Segment",
+				"type": "String"
+			},
+			{
+				"name": "Sales_Before",
+				"type": "String"
+			},
+			{
+				"name": "Sales_After",
+				"type": "String"
+			},
+			{
+				"name": "Customer_Satisfaction_Before",
+				"type": "String"
+			},
+			{
+				"name": "Customer_Satisfaction_After",
+				"type": "String"
+			},
+			{
+				"name": "Purchase_Made",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

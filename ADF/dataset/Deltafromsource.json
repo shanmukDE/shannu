@@ -1,0 +1,13 @@
+{
+	"name": "Deltafromsource",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_freesqldb9032554",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

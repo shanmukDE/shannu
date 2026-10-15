@@ -1,0 +1,15 @@
+{
+	"name": "adfsbdashboardingdev",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "7a44eff0-5be6-46f0-a2e2-d22cca16b1e0",
+		"tenantId": "6085d7a1-4093-4895-8faf-d9e6a4e2df96"
+	}
+}
