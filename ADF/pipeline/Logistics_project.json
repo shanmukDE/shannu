@@ -69,7 +69,7 @@
 									"formatSettings": {
 										"type": "DelimitedTextWriteSettings",
 										"quoteAllText": true,
-										"fileExtension": ".txt"
+										"fileExtension": "csv"
 									}
 								},
 								"enableStaging": false,
@@ -97,7 +97,17 @@
 							"outputs": [
 								{
 									"referenceName": "DS_Logistics_CSV_Sink",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"Foldername": {
+											"value": "@item().TABLE_NAME",
+											"type": "Expression"
+										},
+										"Filename": {
+											"value": "@concat(item().TABLE_NAME,'.csv')",
+											"type": "Expression"
+										}
+									}
 								}
 							]
 						}

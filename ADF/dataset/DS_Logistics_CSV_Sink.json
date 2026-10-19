@@ -5,13 +5,22 @@
 			"referenceName": "LS_sbboardingdev673",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"Foldername": {
+				"type": "string"
+			},
+			"Filename": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "logistics",
-				"fileSystem": "Bronze"
+				"fileName": "@dataset().Filename",
+				"folderPath": "@concat('Bronze/logistics/',dataset().Foldername)",
+				"fileSystem": "output"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
