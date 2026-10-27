@@ -1,0 +1,20 @@
+{
+	"name": "DS_Shipments_Bronze_JSON",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_sbboardingdev673",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "shipment_20261014_175304.json",
+				"folderPath": "Bronze/shipment_api",
+				"fileSystem": "output"
+			}
+		},
+		"schema": {}
+	}
+}
