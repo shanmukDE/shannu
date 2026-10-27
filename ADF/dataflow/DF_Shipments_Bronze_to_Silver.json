@@ -13,12 +13,29 @@
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "flatten1"
+				}
+			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          data as (actual_delivery_date as string, carrier_name as string, customer_id as integer, delivery_location as string, delivery_status as string, expected_delivery_date as string, product_id as integer, promised_delivery_date as string, purchase_order_id as string, quantity_shipped as integer, salesordernumber as string, shipment_date as string, shipment_id as string, shipping_cost as double, supplier_id as string, tax_amount as double, unit_price as double, warehouse_id as string)[],",
+				"          status as string,",
+				"          total_records as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
-				"     documentForm: 'singleDocument') ~> SourceShipmentsBronze"
+				"     documentForm: 'singleDocument') ~> SourceShipmentsBronze",
+				"SourceShipmentsBronze foldDown(unroll(),",
+				"     mapColumn(",
+				"          data,",
+				"          status,",
+				"          total_records",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flatten1"
 			]
 		}
 	}
