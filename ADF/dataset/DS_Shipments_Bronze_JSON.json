@@ -18,73 +18,137 @@
 		"schema": {
 			"type": "object",
 			"properties": {
-				"data": {
-					"type": "array",
-					"items": {
-						"type": "object",
-						"properties": {
-							"actual_delivery_date": {
-								"type": "string"
-							},
-							"carrier_name": {
-								"type": "string"
-							},
-							"customer_id": {
-								"type": "integer"
-							},
-							"delivery_location": {
-								"type": "string"
-							},
-							"delivery_status": {
-								"type": "string"
-							},
-							"expected_delivery_date": {
-								"type": "string"
-							},
-							"product_id": {
-								"type": "integer"
-							},
-							"promised_delivery_date": {
-								"type": "string"
-							},
-							"purchase_order_id": {
-								"type": "string"
-							},
-							"quantity_shipped": {
-								"type": "integer"
-							},
-							"salesordernumber": {
-								"type": "string"
-							},
-							"shipment_date": {
-								"type": "string"
-							},
-							"shipment_id": {
-								"type": "string"
-							},
-							"shipping_cost": {
-								"type": "number"
-							},
-							"supplier_id": {
-								"type": "string"
-							},
-							"tax_amount": {
-								"type": "number"
-							},
-							"unit_price": {
-								"type": "number"
-							},
-							"warehouse_id": {
-								"type": "string"
+				"carrier": {
+					"type": "object",
+					"properties": {
+						"carrier_id": {
+							"type": "string"
+						},
+						"carrier_name": {
+							"type": "string"
+						}
+					}
+				},
+				"charges": {
+					"type": "object",
+					"properties": {
+						"cod_fee": {
+							"type": "number"
+						},
+						"fuel_surcharge": {
+							"type": "number"
+						},
+						"insurance": {
+							"type": "number"
+						},
+						"shipping_cost": {
+							"type": "number"
+						}
+					}
+				},
+				"metadata": {
+					"type": "object",
+					"properties": {
+						"api_version": {
+							"type": "string"
+						},
+						"created_ts": {
+							"type": "string"
+						},
+						"source": {
+							"type": "string"
+						}
+					}
+				},
+				"order_reference": {
+					"type": "object",
+					"properties": {
+						"channel": {
+							"type": "string"
+						},
+						"order_id": {
+							"type": "string"
+						},
+						"seller_id": {
+							"type": "string"
+						}
+					}
+				},
+				"route": {
+					"type": "object",
+					"properties": {
+						"destination": {
+							"type": "object",
+							"properties": {
+								"city": {
+									"type": "string"
+								},
+								"customer_address_type": {
+									"type": "string"
+								},
+								"pincode": {
+									"type": "string"
+								}
+							}
+						},
+						"origin": {
+							"type": "object",
+							"properties": {
+								"city": {
+									"type": "string"
+								},
+								"pincode": {
+									"type": "string"
+								},
+								"warehouse_id": {
+									"type": "string"
+								}
 							}
 						}
 					}
 				},
-				"status": {
-					"type": "string"
+				"shipment_details": {
+					"type": "object",
+					"properties": {
+						"created_at": {
+							"type": "string"
+						},
+						"delay_flag": {
+							"type": "boolean"
+						},
+						"delivered_at": {
+							"type": "string"
+						},
+						"delivery_tat_days": {
+							"type": "integer"
+						},
+						"rto_flag": {
+							"type": "boolean"
+						},
+						"status": {
+							"type": "string"
+						},
+						"status_tracking": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"location": {
+										"type": "string"
+									},
+									"status": {
+										"type": "string"
+									},
+									"timestamp": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
 				},
-				"total_records": {
-					"type": "integer"
+				"shipment_id": {
+					"type": "string"
 				}
 			}
 		}

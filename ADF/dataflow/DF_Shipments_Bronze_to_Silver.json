@@ -9,33 +9,47 @@
 						"referenceName": "DS_Shipments_Bronze_JSON",
 						"type": "DatasetReference"
 					},
-					"name": "SourceShipmentsBronze"
+					"name": "SourceSHipmentBronze"
 				}
 			],
 			"sinks": [],
 			"transformations": [
 				{
-					"name": "flatten1"
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
 				"source(output(",
-				"          data as (actual_delivery_date as string, carrier_name as string, customer_id as integer, delivery_location as string, delivery_status as string, expected_delivery_date as string, product_id as integer, promised_delivery_date as string, purchase_order_id as string, quantity_shipped as integer, salesordernumber as string, shipment_date as string, shipment_id as string, shipping_cost as double, supplier_id as string, tax_amount as double, unit_price as double, warehouse_id as string)[],",
-				"          status as string,",
-				"          total_records as integer",
+				"          carrier as (carrier_id as string, carrier_name as string),",
+				"          charges as (cod_fee as double, fuel_surcharge as double, insurance as double, shipping_cost as double),",
+				"          metadata as (api_version as string, created_ts as string, source as string),",
+				"          order_reference as (channel as string, order_id as string, seller_id as string),",
+				"          route as (destination as (city as string, customer_address_type as string, pincode as string), origin as (city as string, pincode as string, warehouse_id as string)),",
+				"          shipment_details as (created_at as string, delay_flag as boolean, delivered_at as string, delivery_tat_days as integer, rto_flag as boolean, status as string, status_tracking as (location as string, status as string, timestamp as string)[]),",
+				"          shipment_id as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
-				"     documentForm: 'singleDocument') ~> SourceShipmentsBronze",
-				"SourceShipmentsBronze foldDown(unroll(),",
-				"     mapColumn(",
-				"          data,",
-				"          status,",
-				"          total_records",
+				"     documentForm: 'documentPerLine') ~> SourceSHipmentBronze",
+				"SourceSHipmentBronze derive(order_id = order_reference.order_id,",
+				"          carrier_name = carrier.carrier_name,",
+				"          shipping_cost = charges.shipping_cost,",
+				"          shipment_status = shipment_details.status,",
+				"          seller_id = order_reference.seller_id) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          shipment_id,",
+				"          order_id,",
+				"          carrier_name,",
+				"          shipping_cost,",
+				"          shipment_status,",
+				"          seller_id",
 				"     ),",
-				"     skipDuplicateMapInputs: false,",
-				"     skipDuplicateMapOutputs: false) ~> flatten1"
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1"
 			]
 		}
 	}
