@@ -10,8 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "shipment_20261014_175304.json",
-				"folderPath": "Bronze/shipment_api",
+				"fileName": "shipment_20260525_035105.json",
+				"folderPath": "Bronze/shipment_New",
 				"fileSystem": "output"
 			}
 		},
