@@ -52,7 +52,7 @@
 				"     disjoint: false) ~> SplitOrdersQuality@(ValidOrders, InvalidOrders)",
 				"SplitOrdersQuality@ValidOrders sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     partitionFileNames:[''],",
+				"     partitionFileNames:['orders_silver.csv'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
