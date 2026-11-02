@@ -1,0 +1,75 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adfsbdashboardingdev"
+		},
+		"LS_MySQL_password": {
+			"value": ""
+		},
+		"LS_sbboarding2508_connectionString": {
+			"value": ""
+		},
+		"LS_sbboardingdev673_accountKey": {
+			"value": ""
+		},
+		"LS_sbdashboarding_password": {
+			"value": ""
+		},
+		"MySql1_password": {
+			"value": ""
+		},
+		"LS_MySQL_properties_typeProperties_server": {
+			"value": "104.237.2.219"
+		},
+		"LS_MySQL_properties_typeProperties_database": {
+			"value": "logistics"
+		},
+		"LS_MySQL_properties_typeProperties_username": {
+			"value": "mysqluser"
+		},
+		"LS_Shipment_properties_typeProperties_url": {
+			"value": "http://104.237.2.219:9080/"
+		},
+		"LS_freesqldb9032554_properties_typeProperties_server": {
+			"value": "sbdashboarding.database.windows.net"
+		},
+		"LS_freesqldb9032554_properties_typeProperties_database": {
+			"value": "free-sql-db-9032554"
+		},
+		"LS_freesqldb9032554_properties_typeProperties_userName": {
+			"value": "Cloud"
+		},
+		"LS_sbboardingdev673_properties_typeProperties_url": {
+			"value": "https://sbboardingdev673.dfs.core.windows.net/"
+		},
+		"LS_sbdashboarding_properties_typeProperties_server": {
+			"value": "sbdashboarding.database.windows.net"
+		},
+		"LS_sbdashboarding_properties_typeProperties_database": {
+			"value": "free-sql-db-9032554"
+		},
+		"LS_sbdashboarding_properties_typeProperties_userName": {
+			"value": "Cloud"
+		},
+		"LS_sbdashboardingshan_properties_typeProperties_baseUrl": {
+			"value": "https://sbdashboardingshan.vault.azure.net/"
+		},
+		"MySql1_properties_typeProperties_server": {
+			"value": "localhost"
+		},
+		"MySql1_properties_typeProperties_database": {
+			"value": "sakila"
+		},
+		"MySql1_properties_typeProperties_username": {
+			"value": "root"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
