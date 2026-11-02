@@ -1,0 +1,43 @@
+{
+	"name": "DF_Orders_Bronze_to_Silver",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_Orders",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "DerivedOrderColumns"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ORDER_ID as string,",
+				"          CUSTOMER_ID as string,",
+				"          PRODUCT_ID as string,",
+				"          TOTAL_AMOUNT as string,",
+				"          PAYMENT_METHOD as string,",
+				"          ORDER_DATE as string,",
+				"          ORDER_STATUS as string,",
+				"          LAST_UPDATED as string,",
+				"          LAST_UPDATED_AT as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 derive(TOTAL_AMOUNT = toDecimal(TOTAL_AMOUNT, 18, 2),",
+				"          ORDER_DATE = toTimestamp(ORDER_DATE, 'yyyy-MM-dd HH:mm:ss'),",
+				"          LAST_UPDATED = toTimestamp(LAST_UPDATED, 'yyyy-MM-dd HH:mm:ss'),",
+				"          LAST_UPDATED_AT = toTimestamp(LAST_UPDATED_AT, 'yyyy-MM-dd HH:mm:ss')) ~> DerivedOrderColumns"
+			]
+		}
+	}
+}
