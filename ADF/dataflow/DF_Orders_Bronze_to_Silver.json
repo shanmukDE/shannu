@@ -12,10 +12,21 @@
 					"name": "source1"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_Orders_Silver_CSV",
+						"type": "DatasetReference"
+					},
+					"name": "SinkValidOrders"
+				}
+			],
 			"transformations": [
 				{
 					"name": "DerivedOrderColumns"
+				},
+				{
+					"name": "SplitOrdersQuality"
 				}
 			],
 			"scriptLines": [
@@ -36,7 +47,18 @@
 				"source1 derive(TOTAL_AMOUNT = toDecimal(TOTAL_AMOUNT, 18, 2),",
 				"          ORDER_DATE = toTimestamp(ORDER_DATE, 'yyyy-MM-dd HH:mm:ss'),",
 				"          LAST_UPDATED = toTimestamp(LAST_UPDATED, 'yyyy-MM-dd HH:mm:ss'),",
-				"          LAST_UPDATED_AT = toTimestamp(LAST_UPDATED_AT, 'yyyy-MM-dd HH:mm:ss')) ~> DerivedOrderColumns"
+				"          LAST_UPDATED_AT = toTimestamp(LAST_UPDATED_AT, 'yyyy-MM-dd HH:mm:ss')) ~> DerivedOrderColumns",
+				"DerivedOrderColumns split(!isNull(ORDER_ID) && !isNull(TOTAL_AMOUNT) && !isNull(ORDER_DATE) && length(trim(ORDER_ID)) > 0 && TOTAL_AMOUNT >= 0,",
+				"     disjoint: false) ~> SplitOrdersQuality@(ValidOrders, InvalidOrders)",
+				"SplitOrdersQuality@ValidOrders sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[''],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> SinkValidOrders"
 			]
 		}
 	}
