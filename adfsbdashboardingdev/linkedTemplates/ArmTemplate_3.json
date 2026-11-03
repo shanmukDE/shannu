@@ -37,6 +37,86 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DF_Orders_Bronze_to_Silver')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DS_Orders",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DS_Orders_Silver_CSV",
+								"type": "DatasetReference"
+							},
+							"name": "SinkValidOrders"
+						},
+						{
+							"dataset": {
+								"referenceName": "DS_Orders_Rejected_CSV",
+								"type": "DatasetReference"
+							},
+							"name": "SinkInvalidOrders"
+						}
+					],
+					"transformations": [
+						{
+							"name": "DerivedOrderColumns"
+						},
+						{
+							"name": "SplitOrdersQuality"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          ORDER_ID as string,",
+						"          CUSTOMER_ID as string,",
+						"          PRODUCT_ID as string,",
+						"          TOTAL_AMOUNT as string,",
+						"          PAYMENT_METHOD as string,",
+						"          ORDER_DATE as string,",
+						"          ORDER_STATUS as string,",
+						"          LAST_UPDATED as string,",
+						"          LAST_UPDATED_AT as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source1 derive(TOTAL_AMOUNT = toDecimal(TOTAL_AMOUNT, 18, 2),",
+						"          ORDER_DATE = toTimestamp(ORDER_DATE, 'yyyy-MM-dd HH:mm:ss'),",
+						"          LAST_UPDATED = toTimestamp(LAST_UPDATED, 'yyyy-MM-dd HH:mm:ss'),",
+						"          LAST_UPDATED_AT = toTimestamp(LAST_UPDATED_AT, 'yyyy-MM-dd HH:mm:ss')) ~> DerivedOrderColumns",
+						"DerivedOrderColumns split(!isNull(ORDER_ID) && !isNull(TOTAL_AMOUNT) && !isNull(ORDER_DATE) && length(trim(ORDER_ID)) > 0 && TOTAL_AMOUNT >= 0,",
+						"     disjoint: false) ~> SplitOrdersQuality@(ValidOrders, InvalidOrders)",
+						"SplitOrdersQuality@ValidOrders sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SinkValidOrders",
+						"SplitOrdersQuality@InvalidOrders sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SinkInvalidOrders"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DF_Shipments_Bronze_to_Silver')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -107,90 +187,6 @@
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
 						"     partitionBy('hash', 1)) ~> sink1"
-					]
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DF_Orders_Bronze_to_Silver')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "DS_Orders",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "DS_Orders_Silver_CSV",
-								"type": "DatasetReference"
-							},
-							"name": "SinkValidOrders"
-						},
-						{
-							"dataset": {
-								"referenceName": "DS_Orders_Rejected_CSV",
-								"type": "DatasetReference"
-							},
-							"name": "SinkInvalidOrders"
-						}
-					],
-					"transformations": [
-						{
-							"name": "DerivedOrderColumns"
-						},
-						{
-							"name": "SplitOrdersQuality"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          ORDER_ID as string,",
-						"          CUSTOMER_ID as string,",
-						"          PRODUCT_ID as string,",
-						"          TOTAL_AMOUNT as string,",
-						"          PAYMENT_METHOD as string,",
-						"          ORDER_DATE as string,",
-						"          ORDER_STATUS as string,",
-						"          LAST_UPDATED as string,",
-						"          LAST_UPDATED_AT as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> source1",
-						"source1 derive(TOTAL_AMOUNT = toDecimal(TOTAL_AMOUNT, 18, 2),",
-						"          ORDER_DATE = toTimestamp(ORDER_DATE, 'yyyy-MM-dd HH:mm:ss'),",
-						"          LAST_UPDATED = toTimestamp(LAST_UPDATED, 'yyyy-MM-dd HH:mm:ss'),",
-						"          LAST_UPDATED_AT = toTimestamp(LAST_UPDATED_AT, 'yyyy-MM-dd HH:mm:ss')) ~> DerivedOrderColumns",
-						"DerivedOrderColumns split(!isNull(ORDER_ID) && !isNull(TOTAL_AMOUNT) && !isNull(ORDER_DATE) && length(trim(ORDER_ID)) > 0 && TOTAL_AMOUNT >= 0,",
-						"     disjoint: false) ~> SplitOrdersQuality@(ValidOrders, InvalidOrders)",
-						"SplitOrdersQuality@ValidOrders sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     partitionFileNames:['orders_silver.csv'],",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> SinkValidOrders",
-						"SplitOrdersQuality@InvalidOrders sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     partitionFileNames:['invalid_orders.csv'],",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> SinkInvalidOrders"
 					]
 				}
 			},
@@ -451,52 +447,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/PL_Shipments_Bronze_to_Silver')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Data flow1",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "DF_Shipments_Bronze_to_Silver",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"SourceSHipmentBronze": {},
-									"sink1": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/DF_Shipments_Bronze_to_Silver')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/PL_Orders_Bronze_to_Silver')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -541,6 +491,52 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/DF_Orders_Bronze_to_Silver')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_Shipments_Bronze_to_Silver')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DF_Shipments_Bronze_to_Silver",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"SourceSHipmentBronze": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/DF_Shipments_Bronze_to_Silver')]"
 			]
 		}
 	]
