@@ -59,22 +59,18 @@
 				"     disjoint: false) ~> SplitOrdersQuality@(ValidOrders, InvalidOrders)",
 				"SplitOrdersQuality@ValidOrders sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     partitionFileNames:['orders_silver.csv'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> SinkValidOrders",
+				"     skipDuplicateMapOutputs: true) ~> SinkValidOrders",
 				"SplitOrdersQuality@InvalidOrders sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     partitionFileNames:['invalid_orders.csv'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> SinkInvalidOrders"
+				"     skipDuplicateMapOutputs: true) ~> SinkInvalidOrders"
 			]
 		}
 	}
