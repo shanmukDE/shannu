@@ -49,7 +49,7 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: true,",
-				"     partitionFileNames:[''],",
+				"     partitionFileNames:['$pSinkFileName'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
