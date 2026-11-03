@@ -13,6 +13,59 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/Deltafromsource')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_freesqldb9032554",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Newwatermark')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_freesqldb9032554",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "customer_id",
+						"type": "varchar"
+					},
+					{
+						"name": "created_date",
+						"type": "date"
+					},
+					{
+						"name": "modified_date",
+						"type": "date"
+					},
+					{
+						"name": "sales_id",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "sales"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Oldwatermark')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -443,7 +496,9 @@
 				"lastPublishTime": "2026-09-25T17:01:49Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Oldwatermark')]"
+				"[concat(variables('factoryId'), '/datasets/Oldwatermark')]",
+				"[concat(variables('factoryId'), '/datasets/Newwatermark')]",
+				"[concat(variables('factoryId'), '/datasets/Deltafromsource')]"
 			]
 		},
 		{
