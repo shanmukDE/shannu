@@ -1,0 +1,43 @@
+{
+	"name": "PL_Logistics_Generic_Bronze_to_Silver",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEach_Logistics_Tables",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@json('[{\"table\":\"customers\",\"sourceDirectory\":\"Bronze/logistics/customers\",\"sourceFileName\":\"customers.csv\",\"sinkDirectory\":\"SILVER/Logistics/customers\",\"sinkFileName\":\"customers_silver.csv\"},{\"table\":\"products\",\"sourceDirectory\":\"Bronze/logistics/products\",\"sourceFileName\":\"productss.csv\",\"sinkDirectory\":\"SILVER/Logistics/products\",\"sinkFileName\":\"products_silver.csv\"},{\"table\":\"sellers\",\"sourceDirectory\":\"Bronze/logistics/sellers\",\"sourceFileName\":\"sellers.csv\",\"sinkDirectory\":\"SILVER/Logistics/sellers\",\"sinkFileName\":\"sellers_silver.csv\"}]')",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "DF_Process_Logistics_Table",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								},
+								"traceLevel": "Fine"
+							}
+						}
+					]
+				}
+			}
+		],
+		"annotations": []
+	}
+}
