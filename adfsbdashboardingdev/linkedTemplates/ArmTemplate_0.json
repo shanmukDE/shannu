@@ -447,7 +447,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"folderPath": "Logistics/orders_rejected",
+						"folderPath": "SILVER/Logistics/orders_rejected/",
 						"fileSystem": "output"
 					},
 					"columnDelimiter": ",",
