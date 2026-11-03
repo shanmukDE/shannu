@@ -5,9 +5,9 @@
 		"typeProperties": {
 			"sources": [
 				{
-					"dataset": {
-						"referenceName": "DS_Logistics_Generic_Bronze_CSV",
-						"type": "DatasetReference"
+					"linkedService": {
+						"referenceName": "LS_sbboardingdev673",
+						"type": "LinkedServiceReference"
 					},
 					"name": "source1"
 				}
@@ -20,9 +20,18 @@
 				"     pSourceFileName as string,",
 				"     pSinkDirectory as string",
 				"}",
-				"source(allowSchemaDrift: true,",
+				"source(useSchema: false,",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1"
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'ouput',",
+				"     folderPath: ($pSourceDirectory),",
+				"     fileName: ($pSourceFileName),",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> source1"
 			]
 		}
 	}
