@@ -12,13 +12,22 @@
 					"name": "source1"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "LS_sbboardingdev673",
+						"type": "LinkedServiceReference"
+					},
+					"name": "SinkLogisticsSilver"
+				}
+			],
 			"transformations": [],
 			"scriptLines": [
 				"parameters{",
 				"     pSourceDirectory as string,",
 				"     pSourceFileName as string,",
-				"     pSinkDirectory as string",
+				"     pSinkDirectory as string,",
+				"     pSinkFileName as string",
 				"}",
 				"source(useSchema: false,",
 				"     allowSchemaDrift: true,",
@@ -31,7 +40,22 @@
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: true) ~> source1"
+				"     columnNamesAsHeader: true) ~> source1",
+				"source1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: ($pSinkDirectory),",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionFileNames:[''],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> SinkLogisticsSilver"
 			]
 		}
 	}
