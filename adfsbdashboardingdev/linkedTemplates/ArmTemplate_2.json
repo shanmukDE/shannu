@@ -274,10 +274,10 @@
 					"transformations": [],
 					"scriptLines": [
 						"parameters{",
-						"     pSourceDirectory as string,",
-						"     pSourceFileName as string,",
-						"     pSinkDirectory as string,",
-						"     pSinkFileName as string",
+						"     pSourceDirectory as string ('Bronze/logistics/customers'),",
+						"     pSourceFileName as string ('customers.csv'),",
+						"     pSinkDirectory as string ('SILVER/Logistics/customers'),",
+						"     pSinkFileName as string ('customers_silver.csv')",
 						"}",
 						"source(useSchema: false,",
 						"     allowSchemaDrift: true,",
@@ -1433,8 +1433,7 @@
 											"datasetParameters": {
 												"source1": {},
 												"SinkLogisticsSilver": {}
-											},
-											"linkedServiceParameters": {}
+											}
 										},
 										"staging": {},
 										"compute": {
