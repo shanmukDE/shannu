@@ -27,6 +27,28 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
+								"dataflow": {
+									"referenceName": "DF_Logistics_Generic_Bronze_to_Silver",
+									"type": "DataFlowReference",
+									"parameters": {
+										"pSourceDirectory": {
+											"value": "'@{item().sourceDirectory}'",
+											"type": "Expression"
+										},
+										"pSourceFileName": {
+											"value": "'@{item().sourceFileName}'",
+											"type": "Expression"
+										},
+										"pSinkDirectory": {
+											"value": "'@{item().sinkDirectory}'",
+											"type": "Expression"
+										},
+										"pSinkFileName": {
+											"value": "'@{item().sinkFileName}'",
+											"type": "Expression"
+										}
+									}
+								},
 								"compute": {
 									"coreCount": 8,
 									"computeType": "General"
