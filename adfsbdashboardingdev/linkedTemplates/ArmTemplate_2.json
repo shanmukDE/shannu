@@ -41,6 +41,32 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/Shipment')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_sbboardingdev673",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@concat('shipment_',formatDateTime(utcnow(),\n'yyyyMMdd_HHmmss'),'.json')",
+							"type": "Expression"
+						},
+						"folderPath": "Bronze/logistics/shipments",
+						"fileSystem": "output"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/WildCard')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -286,47 +312,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DS_Logistics_Generic_Bronze_CSV')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_sbboardingdev673",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"pDirectory": {
-						"type": "string"
-					},
-					"pFileName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@dataset().pFileName",
-							"type": "Expression"
-						},
-						"folderPath": {
-							"value": "@dataset().pDirectory",
-							"type": "Expression"
-						},
-						"fileSystem": "output"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/Copy_SHipment_logistic_Project')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -391,7 +376,9 @@
 				"annotations": [],
 				"lastPublishTime": "2026-10-14T17:52:36Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Shipment')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/DataLake_to_Datalake Copy_Activity')]",
@@ -1392,6 +1379,85 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/PL_Logistics_Generic_Bronze_to_Silver')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEach_Logistics_Tables",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@json('[{\"table\":\"customers\",\"sourceDirectory\":\"Bronze/logistics/customers\",\"sourceFileName\":\"customers.csv\",\"sinkDirectory\":\"SILVER/Logistics/customers\",\"sinkFileName\":\"customers_silver.csv\"},{\"table\":\"products\",\"sourceDirectory\":\"Bronze/logistics/products\",\"sourceFileName\":\"productss.csv\",\"sinkDirectory\":\"SILVER/Logistics/products\",\"sinkFileName\":\"products_silver.csv\"},{\"table\":\"sellers\",\"sourceDirectory\":\"Bronze/logistics/sellers\",\"sourceFileName\":\"sellers.csv\",\"sinkDirectory\":\"SILVER/Logistics/sellers\",\"sinkFileName\":\"sellers_silver.csv\"}]')",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "DF_Process_Logistics_Table",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "DF_Logistics_Generic_Bronze_to_Silver",
+											"type": "DataFlowReference",
+											"parameters": {
+												"pSourceDirectory": {
+													"value": "'@{item().sourceDirectory}'",
+													"type": "Expression"
+												},
+												"pSourceFileName": {
+													"value": "'@{item().sourceFileName}'",
+													"type": "Expression"
+												},
+												"pSinkDirectory": {
+													"value": "'@{item().sinkDirectory}'",
+													"type": "Expression"
+												},
+												"pSinkFileName": {
+													"value": "'@{item().sinkFileName}'",
+													"type": "Expression"
+												}
+											},
+											"datasetParameters": {
+												"source1": {},
+												"SinkLogisticsSilver": {}
+											},
+											"linkedServiceParameters": {}
+										},
+										"staging": {},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/DF_Logistics_Generic_Bronze_to_Silver')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/PL_blobstorage_extract_to_datalake')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1980,157 +2046,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/Wild_card')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/rearrange_delete_column')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "Group",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Group",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Sales_Before",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Sales_Before",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Sales_After",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Sales_After",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Customer_Segment",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Customer_Segment",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Customer_Satisfaction_Before",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Customer_Satisfaction_Before",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Purchase_Made",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Purchase_Made",
-											"type": "String",
-											"physicalType": "String"
-										}
-									}
-								],
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "Sales_with",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "sales",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": [],
-				"lastPublishTime": "2026-08-19T16:05:50Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/sales')]"
 			]
 		}
 	]

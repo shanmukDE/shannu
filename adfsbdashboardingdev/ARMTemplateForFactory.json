@@ -1434,6 +1434,85 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/PL_Logistics_Generic_Bronze_to_Silver')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEach_Logistics_Tables",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@json('[{\"table\":\"customers\",\"sourceDirectory\":\"Bronze/logistics/customers\",\"sourceFileName\":\"customers.csv\",\"sinkDirectory\":\"SILVER/Logistics/customers\",\"sinkFileName\":\"customers_silver.csv\"},{\"table\":\"products\",\"sourceDirectory\":\"Bronze/logistics/products\",\"sourceFileName\":\"productss.csv\",\"sinkDirectory\":\"SILVER/Logistics/products\",\"sinkFileName\":\"products_silver.csv\"},{\"table\":\"sellers\",\"sourceDirectory\":\"Bronze/logistics/sellers\",\"sourceFileName\":\"sellers.csv\",\"sinkDirectory\":\"SILVER/Logistics/sellers\",\"sinkFileName\":\"sellers_silver.csv\"}]')",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "DF_Process_Logistics_Table",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "DF_Logistics_Generic_Bronze_to_Silver",
+											"type": "DataFlowReference",
+											"parameters": {
+												"pSourceDirectory": {
+													"value": "'@{item().sourceDirectory}'",
+													"type": "Expression"
+												},
+												"pSourceFileName": {
+													"value": "'@{item().sourceFileName}'",
+													"type": "Expression"
+												},
+												"pSinkDirectory": {
+													"value": "'@{item().sinkDirectory}'",
+													"type": "Expression"
+												},
+												"pSinkFileName": {
+													"value": "'@{item().sinkFileName}'",
+													"type": "Expression"
+												}
+											},
+											"datasetParameters": {
+												"source1": {},
+												"SinkLogisticsSilver": {}
+											},
+											"linkedServiceParameters": {}
+										},
+										"staging": {},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/DF_Logistics_Generic_Bronze_to_Silver')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/PL_Orders_Bronze_to_Silver')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -2410,6 +2489,49 @@
 						},
 						"folderPath": {
 							"value": "@concat('Bronze/logistics/',dataset().Foldername)",
+							"type": "Expression"
+						},
+						"fileSystem": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_sbboardingdev673')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Logistics_Generic_Bronze_CSV')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_sbboardingdev673",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"pDirectory": {
+						"type": "string"
+					},
+					"pFileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().pFileName",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().pDirectory",
 							"type": "Expression"
 						},
 						"fileSystem": "output"
@@ -3949,6 +4071,73 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DF_Logistics_Generic_Bronze_to_Silver')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "LS_sbboardingdev673",
+								"type": "LinkedServiceReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "LS_sbboardingdev673",
+								"type": "LinkedServiceReference"
+							},
+							"name": "SinkLogisticsSilver"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"parameters{",
+						"     pSourceDirectory as string,",
+						"     pSourceFileName as string,",
+						"     pSinkDirectory as string,",
+						"     pSinkFileName as string",
+						"}",
+						"source(useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'ouput',",
+						"     folderPath: ($pSourceDirectory),",
+						"     fileName: ($pSourceFileName),",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> source1",
+						"source1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delimited',",
+						"     fileSystem: ($pSinkDirectory),",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true,",
+						"     partitionFileNames:['$pSinkFileName'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> SinkLogisticsSilver"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_sbboardingdev673')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DF_Orders_Bronze_to_Silver')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -4109,116 +4298,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_Shipments_Bronze_JSON')]",
 				"[concat(variables('factoryId'), '/datasets/DS_Shipments_Silver_CSV')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DF_Logistics_Generic_Bronze_to_Silver')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"linkedService": {
-								"referenceName": "LS_sbboardingdev673",
-								"type": "LinkedServiceReference"
-							},
-							"name": "source1"
-						}
-					],
-					"sinks": [
-						{
-							"linkedService": {
-								"referenceName": "LS_sbboardingdev673",
-								"type": "LinkedServiceReference"
-							},
-							"name": "SinkLogisticsSilver"
-						}
-					],
-					"transformations": [],
-					"scriptLines": [
-						"parameters{",
-						"     pSourceDirectory as string,",
-						"     pSourceFileName as string,",
-						"     pSinkDirectory as string,",
-						"     pSinkFileName as string",
-						"}",
-						"source(useSchema: false,",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     format: 'delimited',",
-						"     fileSystem: 'ouput',",
-						"     folderPath: ($pSourceDirectory),",
-						"     fileName: ($pSourceFileName),",
-						"     columnDelimiter: ',',",
-						"     escapeChar: '\\\\',",
-						"     quoteChar: '\\\"',",
-						"     columnNamesAsHeader: true) ~> source1",
-						"source1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     format: 'delimited',",
-						"     fileSystem: ($pSinkDirectory),",
-						"     columnDelimiter: ',',",
-						"     escapeChar: '\\\\',",
-						"     quoteChar: '\\\"',",
-						"     columnNamesAsHeader: true,",
-						"     partitionFileNames:['$pSinkFileName'],",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> SinkLogisticsSilver"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_sbboardingdev673')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Logistics_Generic_Bronze_CSV')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_sbboardingdev673",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"pDirectory": {
-						"type": "string"
-					},
-					"pFileName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@dataset().pFileName",
-							"type": "Expression"
-						},
-						"folderPath": {
-							"value": "@dataset().pDirectory",
-							"type": "Expression"
-						},
-						"fileSystem": "output"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_sbboardingdev673')]"
 			]
 		}
 	]
