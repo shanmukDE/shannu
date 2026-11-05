@@ -1446,7 +1446,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"items": {
-								"value": "@json('[{\"table\":\"customers\",\"sourceDirectory\":\"Bronze/logistics/customers\",\"sourceFileName\":\"customers.csv\",\"sinkDirectory\":\"SILVER/Logistics/customers\",\"sinkFileName\":\"customers_silver.csv\"},{\"table\":\"products\",\"sourceDirectory\":\"Bronze/logistics/products\",\"sourceFileName\":\"productss.csv\",\"sinkDirectory\":\"SILVER/Logistics/products\",\"sinkFileName\":\"products_silver.csv\"},{\"table\":\"sellers\",\"sourceDirectory\":\"Bronze/logistics/sellers\",\"sourceFileName\":\"sellers.csv\",\"sinkDirectory\":\"SILVER/Logistics/sellers\",\"sinkFileName\":\"sellers_silver.csv\"}]')",
+								"value": "@json('[{\"table\":\"customers\",\"sourceDirectory\":\"Bronze/logistics/customers\",\"sourceFileName\":\"customers.csv\",\"sinkDirectory\":\"SILVER/Logistics/customers\",\"sinkFileName\":\"customers_silver.csv\"},{\"table\":\"products\",\"sourceDirectory\":\"Bronze/logistics/products\",\"sourceFileName\":\"products.csv\",\"sinkDirectory\":\"SILVER/Logistics/products\",\"sinkFileName\":\"products_silver.csv\"},{\"table\":\"sellers\",\"sourceDirectory\":\"Bronze/logistics/sellers\",\"sourceFileName\":\"sellers.csv\",\"sinkDirectory\":\"SILVER/Logistics/sellers\",\"sinkFileName\":\"sellers_silver.csv\"}]')",
 								"type": "Expression"
 							},
 							"isSequential": true,
