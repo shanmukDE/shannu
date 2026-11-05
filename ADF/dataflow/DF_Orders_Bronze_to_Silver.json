@@ -66,11 +66,13 @@
 				"     skipDuplicateMapOutputs: true) ~> SinkValidOrders",
 				"SplitOrdersQuality@InvalidOrders sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     partitionFileNames:['orders_rejected.csv'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SinkInvalidOrders"
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> SinkInvalidOrders"
 			]
 		}
 	}
