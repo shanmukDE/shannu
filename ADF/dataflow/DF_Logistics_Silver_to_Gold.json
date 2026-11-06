@@ -1,0 +1,32 @@
+{
+	"name": "DF_Logistics_Silver_to_Gold",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "LS_sbboardingdev673",
+						"type": "LinkedServiceReference"
+					},
+					"name": "silvertogold"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'output',",
+				"     folderPath: 'SILVER/Logistics/orders_valid',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> silvertogold"
+			]
+		}
+	}
+}
