@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "SILVER/Logistics/orders",
+				"folderPath": "SILVER/Logistics/orders/order_valid",
 				"fileSystem": "output"
 			},
 			"columnDelimiter": ",",
