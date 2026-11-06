@@ -301,6 +301,7 @@
 						"     disjoint: false) ~> SplitOrdersQuality@(ValidOrders, InvalidOrders)",
 						"SplitOrdersQuality@ValidOrders sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
+						"     truncate: true,",
 						"     umask: 0022,",
 						"     preCommands: [],",
 						"     postCommands: [],",
