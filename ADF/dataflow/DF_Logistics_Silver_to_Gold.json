@@ -29,6 +29,10 @@
 					"name": "SellersSource"
 				},
 				{
+					"linkedService": {
+						"referenceName": "LS_sbboardingdev673",
+						"type": "LinkedServiceReference"
+					},
 					"name": "Shipmentsource"
 				}
 			],
@@ -104,8 +108,18 @@
 				"     columnNamesAsHeader: true) ~> ProductsSource",
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false) ~> ",
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> "
+				"source(useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'output',",
+				"     folderPath: 'SILVER/Logistics/shipments',",
+				"     fileName: 'shipments_silver.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> "
 			]
 		}
 	}
