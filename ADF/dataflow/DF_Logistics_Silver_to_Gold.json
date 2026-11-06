@@ -9,22 +9,32 @@
 						"referenceName": "LS_sbboardingdev673",
 						"type": "LinkedServiceReference"
 					},
-					"name": "silvertogold"
+					"name": "OrdersSource"
+				},
+				{
+					"linkedService": {
+						"referenceName": "LS_sbboardingdev673",
+						"type": "LinkedServiceReference"
+					},
+					"name": "CustomersSource"
 				}
 			],
 			"sinks": [],
 			"transformations": [],
 			"scriptLines": [
 				"source(output(",
-				"          ORDER_ID as string,",
-				"          CUSTOMER_ID as string,",
-				"          PRODUCT_ID as string,",
-				"          TOTAL_AMOUNT as decimal(18,2),",
-				"          PAYMENT_METHOD as string,",
-				"          ORDER_DATE as timestamp,",
-				"          ORDER_STATUS as string,",
-				"          LAST_UPDATED as timestamp,",
-				"          LAST_UPDATED_AT as timestamp",
+				"          customer_id as string,",
+				"          name as string,",
+				"          email as string,",
+				"          phone_number as string,",
+				"          gender as string,",
+				"          customer_segment as string,",
+				"          address as string,",
+				"          city as string,",
+				"          state as string,",
+				"          pincode as string,",
+				"          registered_at as string,",
+				"          last_updated_at as string",
 				"     ),",
 				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
@@ -36,7 +46,19 @@
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: true) ~> silvertogold"
+				"     columnNamesAsHeader: true) ~> OrdersSource",
+				"source(useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'output',",
+				"     folderPath: 'SILVER/Logistics/customers',",
+				"     fileName: 'customers_silver.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> CustomersSource"
 			]
 		}
 	}
