@@ -26,6 +26,10 @@
 					"name": "ProductsSource"
 				},
 				{
+					"linkedService": {
+						"referenceName": "LS_sbboardingdev673",
+						"type": "LinkedServiceReference"
+					},
 					"name": "SellersSource"
 				},
 				{
@@ -106,21 +110,18 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: true) ~> ProductsSource",
-				"source(output(",
-				"          seller_id as string,",
-				"          seller_name as string,",
-				"          warehouse_location as string,",
-				"          last_updated_at as string",
-				"     ),",
+				"source(useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     fileSystem: 'output',",
-				"     folderPath: 'SILVER/Logistics/sellers',",
-				"     fileName: 'sellers_silver.csv',",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: true) ~> SellersSource",
+				"     columnNamesAsHeader: false,",
+				"     fileSystem: 'output',",
+				"     folderPath: 'SILVER/Logistics/sellers',",
+				"     fileName: 'sellers_silver.csv') ~> SellersSource",
 				"source(output(",
 				"          shipment_id as string,",
 				"          order_id as string,",
