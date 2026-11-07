@@ -52,7 +52,7 @@
 					"name": "JoinOrdersShipments"
 				},
 				{
-					"name": "JoinOrderShipments"
+					"name": "JoinOrdersSellers"
 				}
 			],
 			"scriptLines": [
@@ -184,7 +184,7 @@
 				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> JoinOrderShipments"
+				"     broadcast: 'auto')~> JoinOrdersSellers"
 			]
 		}
 	}
