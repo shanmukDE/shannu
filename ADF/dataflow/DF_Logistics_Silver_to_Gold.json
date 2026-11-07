@@ -33,6 +33,10 @@
 					"name": "SellersSource"
 				},
 				{
+					"linkedService": {
+						"referenceName": "LS_sbboardingdev673",
+						"type": "LinkedServiceReference"
+					},
 					"name": "ShipmentsSource"
 				}
 			],
@@ -122,27 +126,18 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: true) ~> SellersSource",
-				"source(output(",
-				"          shipment_id as string,",
-				"          order_id as string,",
-				"          seller_id as string,",
-				"          carrier_id as string,",
-				"          city as string,",
-				"          pincode as string,",
-				"          status as string,",
-				"          created_at as string,",
-				"          delivered_at as string,",
-				"          shipping_cost as decimal(18,2)",
-				"     ),",
+				"source(useSchema: false,",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
 				"     fileSystem: 'output',",
 				"     folderPath: 'SILVER/Logistics/shipments',",
-				"     fileName: 'shipments_silver.csv',",
+				"     fileName: '     shipments_silver.csv',",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: true) ~> ShipmentsSource",
+				"     columnNamesAsHeader: false) ~> ShipmentsSource",
 				"OrdersSource, CustomersSource join(OrdersSource@CUSTOMER_ID == CustomersSource@customer_id,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
