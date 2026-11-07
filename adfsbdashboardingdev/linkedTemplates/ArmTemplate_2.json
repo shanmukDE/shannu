@@ -313,6 +313,264 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DF_Logistics_Silver_to_Gold')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "LS_sbboardingdev673",
+								"type": "LinkedServiceReference"
+							},
+							"name": "OrdersSource"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_sbboardingdev673",
+								"type": "LinkedServiceReference"
+							},
+							"name": "CustomersSource"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_sbboardingdev673",
+								"type": "LinkedServiceReference"
+							},
+							"name": "ProductsSource"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_sbboardingdev673",
+								"type": "LinkedServiceReference"
+							},
+							"name": "SellersSource"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_sbboardingdev673",
+								"type": "LinkedServiceReference"
+							},
+							"name": "ShipmentsSource"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "LS_sbboardingdev673",
+								"type": "LinkedServiceReference"
+							},
+							"name": "SinkLogisticsGold"
+						}
+					],
+					"transformations": [
+						{
+							"name": "JoinOrdersCustomers"
+						},
+						{
+							"name": "JoinOrdersProducts"
+						},
+						{
+							"name": "JoinOrdersShipments"
+						},
+						{
+							"name": "JoinOrdersSellers"
+						},
+						{
+							"name": "SelectGoldColumns"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          ORDER_ID as string,",
+						"          CUSTOMER_ID as string,",
+						"          PRODUCT_ID as string,",
+						"          TOTAL_AMOUNT as decimal(18,2),",
+						"          PAYMENT_METHOD as string,",
+						"          ORDER_DATE as timestamp,",
+						"          ORDER_STATUS as string,",
+						"          LAST_UPDATED as timestamp,",
+						"          LAST_UPDATED_AT as timestamp",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'output',",
+						"     folderPath: 'SILVER/Logistics/orders_valid',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> OrdersSource",
+						"source(output(",
+						"          customer_id as string,",
+						"          name as string,",
+						"          email as string,",
+						"          phone_number as string,",
+						"          gender as string,",
+						"          customer_segment as string,",
+						"          address as string,",
+						"          city as string,",
+						"          state as string,",
+						"          pincode as string,",
+						"          registered_at as string,",
+						"          last_updated_at as string",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'output',",
+						"     folderPath: 'SILVER/Logistics/customers',",
+						"     fileName: 'customers_silver.csv',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> CustomersSource",
+						"source(output(",
+						"          product_id as string,",
+						"          product_name as string,",
+						"          category as string,",
+						"          last_updated_at as string,",
+						"          price as decimal(18,2)",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'output',",
+						"     folderPath: 'SILVER/Logistics/products',",
+						"     fileName: 'products_silver.csv',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> ProductsSource",
+						"source(output(",
+						"          seller_id as string,",
+						"          seller_name as string,",
+						"          warehouse_location as string,",
+						"          last_updated_at as string",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'output',",
+						"     folderPath: 'SILVER/Logistics/sellers',",
+						"     fileName: 'sellers_silver.csv',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> SellersSource",
+						"source(output(",
+						"          shipment_id as string,",
+						"          order_id as string,",
+						"          seller_id as string,",
+						"          carrier_id as string,",
+						"          city as string,",
+						"          pincode as string,",
+						"          status as string,",
+						"          created_at as string,",
+						"          delivered_at as string,",
+						"          shipping_cost as decimal(18,2)",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'output',",
+						"     folderPath: 'SILVER/Logistics/shipments',",
+						"     fileName: 'shipments_silver.csv',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> ShipmentsSource",
+						"OrdersSource, CustomersSource join(OrdersSource@CUSTOMER_ID == CustomersSource@customer_id,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> JoinOrdersCustomers",
+						"JoinOrdersCustomers, ProductsSource join(OrdersSource@PRODUCT_ID == ProductsSource@product_id,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> JoinOrdersProducts",
+						"JoinOrdersProducts, ShipmentsSource join(toString(OrdersSource@ORDER_ID) == ShipmentsSource@order_id,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> JoinOrdersShipments",
+						"JoinOrdersShipments, SellersSource join(ShipmentsSource@seller_id == SellersSource@seller_id,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> JoinOrdersSellers",
+						"JoinOrdersSellers select(mapColumn(",
+						"          ORDER_ID = OrdersSource@ORDER_ID,",
+						"          CUSTOMER_ID = OrdersSource@CUSTOMER_ID,",
+						"          PRODUCT_ID = OrdersSource@PRODUCT_ID,",
+						"          TOTAL_AMOUNT,",
+						"          PAYMENT_METHOD,",
+						"          ORDER_DATE,",
+						"          ORDER_STATUS,",
+						"          LAST_UPDATED,",
+						"          LAST_UPDATED_AT = OrdersSource@LAST_UPDATED_AT,",
+						"          customer_name = name,",
+						"          email,",
+						"          phone_number,",
+						"          gender,",
+						"          customer_segment,",
+						"          address,",
+						"          customer_city = CustomersSource@city,",
+						"          state,",
+						"          customer_pincode = CustomersSource@pincode,",
+						"          registered_at,",
+						"          product_name,",
+						"          category,",
+						"          product_price = price,",
+						"          shipment_id,",
+						"          seller_id = ShipmentsSource@seller_id,",
+						"          carrier_id,",
+						"          shipment_city = ShipmentsSource@city,",
+						"          shipment_pincode = ShipmentsSource@pincode,",
+						"          shipment_status = status,",
+						"          created_at,",
+						"          delivered_at,",
+						"          shipping_cost,",
+						"          seller_name,",
+						"          warehouse_location",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SelectGoldColumns",
+						"SelectGoldColumns sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'output',",
+						"     folderPath: 'GOLD/Logistics/orders_analytics',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true,",
+						"     partitionFileNames:['logistics_gold.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> SinkLogisticsGold"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Copy_SHipment_logistic_Project')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1968,85 +2226,6 @@
 				"lastPublishTime": "2026-08-31T14:22:24Z"
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Wild_Card_Path')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"wildcardFolderPath": "folder",
-									"wildcardFileName": "Document*",
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "Wild_card",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DelimitedText10",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": [],
-				"lastPublishTime": "2026-08-24T07:28:04Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Wild_card')]"
-			]
 		}
 	]
 }
