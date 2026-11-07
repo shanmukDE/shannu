@@ -33,7 +33,11 @@
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "JoinOrdersCustomers"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          ORDER_ID as string,",
@@ -102,10 +106,47 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: true) ~> ProductsSource",
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> ",
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> "
+				"source(output(",
+				"          seller_id as string,",
+				"          seller_name as string,",
+				"          warehouse_location as string,",
+				"          last_updated_at as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     fileSystem: 'output',",
+				"     folderPath: 'SILVER/Logistics/sellers',",
+				"     fileName: 'sellers_silver.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> SellersSource",
+				"source(output(",
+				"          shipment_id as string,",
+				"          order_id as string,",
+				"          seller_id as string,",
+				"          carrier_id as string,",
+				"          city as string,",
+				"          pincode as string,",
+				"          status as string,",
+				"          created_at as string,",
+				"          delivered_at as string,",
+				"          shipping_cost as decimal(18,2)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     fileSystem: 'output',",
+				"     folderPath: 'SILVER/Logistics/shipments',",
+				"     fileName: 'shipments_silver.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> ShipmentsSource",
+				"OrdersSource, CustomersSource join(OrdersSource@CUSTOMER_ID == CustomersSource@customer_id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JoinOrdersCustomers"
 			]
 		}
 	}
