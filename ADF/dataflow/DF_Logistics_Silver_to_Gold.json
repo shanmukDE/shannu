@@ -53,6 +53,9 @@
 				},
 				{
 					"name": "JoinOrdersSellers"
+				},
+				{
+					"name": "SelectGoldColumns"
 				}
 			],
 			"scriptLines": [
@@ -184,7 +187,44 @@
 				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> JoinOrdersSellers"
+				"     broadcast: 'auto')~> JoinOrdersSellers",
+				"JoinOrdersSellers select(mapColumn(",
+				"          ORDER_ID = OrdersSource@ORDER_ID,",
+				"          CUSTOMER_ID = OrdersSource@CUSTOMER_ID,",
+				"          PRODUCT_ID = OrdersSource@PRODUCT_ID,",
+				"          TOTAL_AMOUNT,",
+				"          PAYMENT_METHOD,",
+				"          ORDER_DATE,",
+				"          ORDER_STATUS,",
+				"          LAST_UPDATED,",
+				"          LAST_UPDATED_AT = OrdersSource@LAST_UPDATED_AT,",
+				"          customer_name = name,",
+				"          email,",
+				"          phone_number,",
+				"          gender,",
+				"          customer_segment,",
+				"          address,",
+				"          customer_city = CustomersSource@city,",
+				"          state,",
+				"          customer_pincode = CustomersSource@pincode,",
+				"          registered_at,",
+				"          product_name,",
+				"          category,",
+				"          product_price = price,",
+				"          shipment_id,",
+				"          seller_id = ShipmentsSource@seller_id,",
+				"          carrier_id,",
+				"          shipment_city = ShipmentsSource@city,",
+				"          shipment_pincode = ShipmentsSource@pincode,",
+				"          shipment_status = status,",
+				"          created_at,",
+				"          delivered_at,",
+				"          shipping_cost,",
+				"          seller_name,",
+				"          warehouse_location",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectGoldColumns"
 			]
 		}
 	}
