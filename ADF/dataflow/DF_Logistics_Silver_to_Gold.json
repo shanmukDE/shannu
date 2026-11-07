@@ -40,7 +40,15 @@
 					"name": "ShipmentsSource"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "LS_sbboardingdev673",
+						"type": "LinkedServiceReference"
+					},
+					"name": "SinkLogisticsGold"
+				}
+			],
 			"transformations": [
 				{
 					"name": "JoinOrdersCustomers"
@@ -224,7 +232,22 @@
 				"          warehouse_location",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SelectGoldColumns"
+				"     skipDuplicateMapOutputs: true) ~> SelectGoldColumns",
+				"SelectGoldColumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'output',",
+				"     folderPath: 'GOLD/Logistics/orders_analytics',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionFileNames:['logistics_gold.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SinkLogisticsGold"
 			]
 		}
 	}
