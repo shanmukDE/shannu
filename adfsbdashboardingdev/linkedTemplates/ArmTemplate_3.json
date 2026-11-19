@@ -13,6 +13,101 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/Pl_Copy_datalake_to_SQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "upsert",
+								"upsertSettings": {
+									"useTempDB": true,
+									"keys": [
+										"Email"
+									]
+								},
+								"sqlWriterUseTableLock": false,
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_Parameterization_new_DL_TO_SQL",
+								"type": "DatasetReference",
+								"parameters": {
+									"containername": "input",
+									"directoryname": "testfolder",
+									"filename": "Document2.csv"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSqlTable1",
+								"type": "DatasetReference",
+								"parameters": {
+									"schemaname": "dbo",
+									"filename": "departmentschemaa"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"containername": {
+						"type": "string"
+					},
+					"directoryname": {
+						"type": "string"
+					},
+					"filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-31T14:22:24Z"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Wild_Card_Path')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -429,6 +524,9 @@
 						},
 						{
 							"name": "select1"
+						},
+						{
+							"name": "flatten1"
 						}
 					],
 					"scriptLines": [
@@ -445,10 +543,10 @@
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false,",
 						"     documentForm: 'documentPerLine') ~> SourceSHipmentBronze",
-						"SourceSHipmentBronze derive(order_id = order_reference.order_id,",
+						"flatten1 derive(order_id = order_reference.order_id,",
 						"          carrier_name = carrier.carrier_name,",
 						"          shipping_cost = charges.shipping_cost,",
-						"          shipment_status = shipment_details.status,",
+						"          shipment_status = tracking_status,",
 						"          seller_id = order_reference.seller_id) ~> derivedColumn1",
 						"derivedColumn1 select(mapColumn(",
 						"          shipment_id,",
@@ -456,10 +554,27 @@
 						"          carrier_name,",
 						"          shipping_cost,",
 						"          shipment_status,",
-						"          seller_id",
+						"          seller_id,",
+						"          tracking_location,",
+						"          tracking_status,",
+						"          tracking_timestamp",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> select1",
+						"SourceSHipmentBronze foldDown(unroll(shipment_details.status_tracking),",
+						"     mapColumn(",
+						"          carrier,",
+						"          charges,",
+						"          metadata,",
+						"          order_reference,",
+						"          route,",
+						"          shipment_id,",
+						"          tracking_location = shipment_details.status_tracking.location,",
+						"          tracking_status = shipment_details.status_tracking.status,",
+						"          tracking_timestamp = shipment_details.status_tracking.timestamp",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten1",
 						"select1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     partitionFileNames:['shipments_silver.csv'],",
@@ -471,54 +586,6 @@
 						"     partitionBy('hash', 1)) ~> sink1"
 					]
 				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/PL_Logistics_Silver_to_Gold')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "PL_Logistics_Silver_to_Gold",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "DF_Logistics_Silver_to_Gold",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"OrdersSource": {},
-									"CustomersSource": {},
-									"ProductsSource": {},
-									"SellersSource": {},
-									"ShipmentsSource": {},
-									"SinkLogisticsGold": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
 			},
 			"dependsOn": []
 		},
