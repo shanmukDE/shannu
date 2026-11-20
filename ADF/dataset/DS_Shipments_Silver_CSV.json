@@ -19,6 +19,43 @@
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
-		"schema": []
+		"schema": [
+			{
+				"name": "shipment_id",
+				"type": "String"
+			},
+			{
+				"name": "order_id",
+				"type": "String"
+			},
+			{
+				"name": "carrier_name",
+				"type": "String"
+			},
+			{
+				"name": "shipping_cost",
+				"type": "String"
+			},
+			{
+				"name": "shipment_status",
+				"type": "String"
+			},
+			{
+				"name": "seller_id",
+				"type": "String"
+			},
+			{
+				"name": "tracking_location",
+				"type": "String"
+			},
+			{
+				"name": "tracking_status",
+				"type": "String"
+			},
+			{
+				"name": "tracking_timestamp",
+				"type": "String"
+			}
+		]
 	}
 }
