@@ -33,9 +33,9 @@
 					"name": "SellersSource"
 				},
 				{
-					"linkedService": {
-						"referenceName": "LS_sbboardingdev673",
-						"type": "LinkedServiceReference"
+					"dataset": {
+						"referenceName": "DS_Shipments_Silver_CSV",
+						"type": "DatasetReference"
 					},
 					"name": "ShipmentsSource"
 				}
@@ -152,18 +152,9 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: true) ~> SellersSource",
-				"source(useSchema: false,",
-				"     allowSchemaDrift: true,",
+				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'delimited',",
-				"     fileSystem: 'output',",
-				"     folderPath: 'SILVER/Logistics/shipments',",
-				"     fileName: 'shipments_silver.csv',",
-				"     columnDelimiter: ',',",
-				"     escapeChar: '\\\\',",
-				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: true) ~> ShipmentsSource",
+				"     ignoreNoFilesFound: false) ~> ShipmentsSource",
 				"OrdersSource, CustomersSource join(OrdersSource@CUSTOMER_ID == CustomersSource@customer_id,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
@@ -208,10 +199,10 @@
 				"          category,",
 				"          product_price = price,",
 				"          shipment_id,",
-				"          seller_id = ShipmentsSource@seller_id,",
+				"          seller_id = {ShipmentsSource@seller_id},",
 				"          carrier_id,",
-				"          shipment_city = ShipmentsSource@city,",
-				"          shipment_pincode = ShipmentsSource@pincode,",
+				"          shipment_city = {ShipmentsSource@city},",
+				"          shipment_pincode = {ShipmentsSource@pincode},",
 				"          shipment_status = status,",
 				"          created_at,",
 				"          delivered_at,",

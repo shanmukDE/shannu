@@ -10,6 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "shipments_silver.csv",
 				"folderPath": "SILVER/Logistics/shipments",
 				"fileSystem": "output"
 			},
